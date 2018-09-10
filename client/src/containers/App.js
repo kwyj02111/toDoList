@@ -6,9 +6,7 @@ import '../assets/css/reset.css';
 class App extends Component {
     render() {
         return (
-            <div>
-                <HomeContainer/>
-            </div>
+            <HomeContainer/>
         );
     }
 }
