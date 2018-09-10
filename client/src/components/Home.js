@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Login from './Login';
+import '../assets/css/home.css';
 
 const Home = ({loginState, loginClick}) => {
 
     return (
-        <div>
+        <div className="home-container">
             <Login
                 loginState = {loginState}
                 loginClick = {loginClick}
