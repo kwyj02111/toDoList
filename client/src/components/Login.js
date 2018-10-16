@@ -9,46 +9,48 @@ const Login = ({ loginState, loginClick }) => {
 
     return (
         <div className="login-container">
-            <form
-                className="login-input-area"
-                onSubmit={ e => {
-                    e.preventDefault()
+            <div className="login-area">
+                <form
+                    className="login-input-area"
+                    onSubmit={ e => {
+                        e.preventDefault()
 
-                    if(!inputId.value.trim() || !inputPwd.value.trim()){
-                        return
-                    }
+                        if(!inputId.value.trim() || !inputPwd.value.trim()){
+                            return
+                        }
 
-                    loginClick(inputId.value, inputPwd.value);
-                }}
-            >
-                <div className="login-input-box">
-                    <i className="login-input-icon material-icons">&#xE853;</i>
-                    <input
-                        className="login-id-input"
-                        type="text"
-                        placeholder="id"
-                        ref = {node => inputId = node}
-                    />
-                </div>
-
-                <div className="login-input-box">
-                    <i className="login-input-icon material-icons">&#xE0DA;</i>
-                    <input
-                        className="login-pwd-input"
-                        type="password"
-                        placeholder="password"
-                        ref = {node => inputPwd = node}
-                    />
-                </div>
-
-                <button
-                    className="login-btn"
-                    onClick={loginClick}
-                    type="submit"
+                        loginClick(inputId.value, inputPwd.value);
+                    }}
                 >
-                    Login!
-                </button>
-            </form>
+                    <div className="login-input-box">
+                        <i className="login-input-icon material-icons">&#xE853;</i>
+                        <input
+                            className="login-id-input"
+                            type="text"
+                            placeholder="id"
+                            ref = {node => inputId = node}
+                        />
+                    </div>
+
+                    <div className="login-input-box">
+                        <i className="login-input-icon material-icons">&#xE0DA;</i>
+                        <input
+                            className="login-pwd-input"
+                            type="password"
+                            placeholder="password"
+                            ref = {node => inputPwd = node}
+                        />
+                    </div>
+
+                    <button
+                        className="login-btn"
+                        onClick={loginClick}
+                        type="submit"
+                    >
+                        Login!
+                    </button>
+                </form>
+            </div>
         </div>
 
     );

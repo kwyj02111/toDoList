@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import * as axiosService from '../services/axios/axios';
 import * as userInfoService from '../services/userInfo/userInfo';
-import { LoginURL } from '../services/axios/axiosUrl';
+import { loginURL } from '../services/axios/axiosUrl';
 
 
 const mapStateToProps = (state) => ({
@@ -16,7 +16,7 @@ const mapDispatchToProps = (dispatch) => ({
             return;
         }
 
-        let url = LoginURL;
+        let url = loginURL;
         var param = {
             USER_ID : id,
             USER_PASSWORD : pwd,
@@ -24,6 +24,11 @@ const mapDispatchToProps = (dispatch) => ({
         };
 
         const login = await axiosService.getData(url, param);
+
+        if(login.data.result !== 1){
+            alert(login.data.msg);
+            return;
+        }
 
         if(login.data.data.code === 1){
             dispatch(actions.loginSuccess(id));
@@ -33,6 +38,8 @@ const mapDispatchToProps = (dispatch) => ({
         }else{
             alert(login.data.data.msg);
         }
+
+        return;
     },
 });
 

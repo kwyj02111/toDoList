@@ -1,15 +1,23 @@
 .login-container {
-    width: 90%;
+    width: 100%;
+    height: auto;
+    text-align: center;
+    padding-top: 15%;
+}
+
+.login-area {
+    width: 100%;
+    max-width: 500px;
     height: auto;
     display: inline-block;
     border: 1px solid #f68d92;
     border-radius: 25px;
-    margin: 20% 5% 0 5%;
-    padding: 0 15px;
+    margin: 0 auto;
+    padding: 25px;
 }
 
 .login-input-area {
-    padding: 40px;
+    padding: 20px;
 }
 
 .login-input-box {
@@ -42,7 +50,6 @@
     text-align: center;
     width: 50%;
     height: 30px;
-    margin-left: 25%;
     border: 1px solid #e2464e;
     border-radius: 20px;
     line-height: 30px;
