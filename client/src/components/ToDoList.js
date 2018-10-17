@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as axiosService from '../services/axios/axios';
 import * as userInfoService from '../services/userInfo/userInfo';
-import { getListURL } from '../services/axios/axiosUrl';
+import { getListURL, addListURL } from '../services/axios/axiosUrl';
 import '../assets/css/toDoList.css';
 
 class ToDoList extends Component {
@@ -12,6 +12,7 @@ class ToDoList extends Component {
         this.state = {
             axios : false,
             list : [],
+            addTodoValue : '',
         }
     }
 
@@ -46,8 +47,58 @@ class ToDoList extends Component {
         }
     }
 
+    addTodoList = async () => {
+
+        try {
+            // wait for promises
+            let url = addListURL;
+            let token = userInfoService.getLocalStorage('aslover-token');
+            let param = {
+                contents : this.state.addTodoValue,
+                token : token
+            }
+
+            const addTodoList = await axiosService.postData(url, param);
+
+            if(addTodoList.data.result !== 1){
+
+                alert('error!');
+                this.setState({
+                    addTodoValue: '',
+                });
+                return;
+            }
+
+            this.setState({
+                addTodoValue: '',
+            });
+
+            this.fetchTodoList();
+
+        } catch(e) {
+            // if err, stop at this point
+            console.log(e);
+        }
+    }
+
     componentDidMount() {
         this.fetchTodoList();
+    }
+
+    addTodoInputKeyPress = (event) => {
+        if (event.keyCode === 13 || event.charCode === 13) {
+            this.addTodoList();
+        }
+
+        return;
+    }
+
+    updateInputValue(event) {
+        this.setState({
+            addTodoValue: event.target.value
+        });
+
+        return;
     }
 
     render() {
@@ -59,9 +110,16 @@ class ToDoList extends Component {
                             className="todolist-input"
                             type="text"
                             placeholder="+ add ToDoList"
+                            value={this.state.addTodoValue}
+                            onKeyPress={this.addTodoInputKeyPress}
+                            onChange={event => this.updateInputValue(event)}
+                            autoFocus
                         />
 
-                        <button className="todolist-add-btn">
+                        <button
+                            className="todolist-add-btn"
+                            onClick={this.addTodoList.bind()}
+                        >
                             <i className="todolist-add-btn-icon material-icons">playlist_add</i>
                         </button>
                     </div>
