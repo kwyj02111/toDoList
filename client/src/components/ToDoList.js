@@ -25,6 +25,11 @@ class ToDoList extends Component {
             // wait for promises
             let url = getListURL;
             let token = userInfoService.getLocalStorage('aslover-token');
+
+            if(token === undefined){
+                return;
+            }
+
             let param = {
                 page : 0,
                 size : 100,

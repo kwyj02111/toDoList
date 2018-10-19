@@ -31,10 +31,10 @@ const mapDispatchToProps = (dispatch) => ({
         }
 
         if(login.data.data.code === 1){
-            dispatch(actions.loginSuccess(id));
-
             let token = login.data.token;
             userInfoService.setUserToken(token);
+
+            dispatch(actions.loginSuccess(id));
         }else{
             alert(login.data.data.msg);
         }
