@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import * as axiosService from '../services/axios/axios';
 import * as userInfoService from '../services/userInfo/userInfo';
-import { getListURL, addListURL } from '../services/axios/axiosUrl';
+import { getListURL, addListURL, updateStateURL } from '../services/axios/axiosUrl';
+import { findIndex } from 'underscore';
 import '../assets/css/toDoList.css';
 
 class ToDoList extends Component {
@@ -86,6 +87,44 @@ class ToDoList extends Component {
         }
     }
 
+    updateTodoListState = async (item) => {
+
+        let complete = 0;
+        if(item.IS_COMPLETE === 0){
+            complete = 1;
+        }
+
+        try {
+            // wait for promises
+            let url = updateStateURL;
+            let token = userInfoService.getLocalStorage('aslover-token');
+            let param = {
+                NO : item.NO,
+                IS_COMPLETE : complete,
+                token : token
+            }
+
+            const updateState = await axiosService.putData(url, param);
+
+            if(updateState.data.result !== 1){
+                alert('error!');
+                return;
+            }
+
+            let newTodolist = this.state.list;
+            let index = findIndex(newTodolist, { NO : item.NO });
+            newTodolist[index].IS_COMPLETE = complete;
+
+            this.setState({
+                list: newTodolist
+            });
+
+        } catch(e) {
+            // if err, stop at this point
+            console.log(e);
+        }
+    }
+
     componentDidMount() {
         this.fetchTodoList();
     }
@@ -123,7 +162,7 @@ class ToDoList extends Component {
 
                         <button
                             className="todolist-add-btn"
-                            onClick={this.addTodoList.bind()}
+                            onClick={() => this.addTodoList}
                         >
                             <i className="todolist-add-btn-icon material-icons">playlist_add</i>
                         </button>
@@ -134,7 +173,10 @@ class ToDoList extends Component {
                             <li key={item.NO}
                                 className="todolist-item"
                             >
-                                <button className="todolist-item-check-btn">
+                                <button
+                                    className="todolist-item-check-btn"
+                                    onClick={() => this.updateTodoListState(item)}
+                                >
                                     {item.IS_COMPLETE > 0 ?
                                         <i className="todolist-item-check-icon material-icons">done</i> : ''
                                     }
@@ -154,6 +196,7 @@ class ToDoList extends Component {
             </div>
         );
     }
+
 };
 
 export default ToDoList;

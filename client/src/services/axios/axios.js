@@ -7,3 +7,7 @@ export function getData(url, params) {
 export function postData(url, params) {
     return axios.post(`${url}`, params);
 }
+
+export function putData(url, params) {
+    return axios.put(`${url}`, params);
+}
