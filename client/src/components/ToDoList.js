@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import * as axiosService from '../services/axios/axios';
 import * as userInfoService from '../services/userInfo/userInfo';
 import { getListURL, addListURL, updateStateURL } from '../services/axios/axiosUrl';
-import { findIndex } from 'underscore';
+import { findIndex, each } from 'underscore';
 import '../assets/css/toDoList.css';
 
 class ToDoList extends Component {
@@ -38,6 +38,10 @@ class ToDoList extends Component {
             }
 
             const todoList = await axiosService.getData(url, param);
+
+            each(todoList.data.data, (data) =>{
+                data['edit'] = false;
+            });
 
             this.setState({
                 axios: false,
@@ -125,6 +129,18 @@ class ToDoList extends Component {
         }
     }
 
+    updateTodoListEditMenuState(item) {
+
+        let listTest = this.state.list;
+
+        let index = findIndex(listTest, { NO : item.NO });
+        listTest[index].edit = !item.edit;
+
+        this.setState({
+            list: listTest
+        });
+    }
+
     componentDidMount() {
         this.fetchTodoList();
     }
@@ -173,22 +189,60 @@ class ToDoList extends Component {
                             <li key={item.NO}
                                 className="todolist-item"
                             >
-                                <button
-                                    className="todolist-item-check-btn"
-                                    onClick={() => this.updateTodoListState(item)}
-                                >
-                                    {item.IS_COMPLETE > 0 ?
-                                        <i className="todolist-item-check-icon material-icons">done</i> : ''
-                                    }
-                                </button>
+                                <div className={!item.edit ? "todolist-item-outer" : "todolist-item-outer edit-mode"}>
+                                    <button
+                                        className="todolist-item-check-btn"
+                                        onClick={() => this.updateTodoListState(item)}
+                                    >
+                                        {item.IS_COMPLETE > 0 ?
+                                            <i className="todolist-item-check-icon material-icons">done</i> : ''
+                                        }
+                                    </button>
 
-                                <div className={item.IS_COMPLETE > 0 ? 'todolist-item-content done' : 'todolist-item-content'}>
-                                    {item.CONTENT}
+                                    <div className={item.IS_COMPLETE > 0 ? 'todolist-item-content done' : 'todolist-item-content'}>
+                                        {item.CONTENT}
+                                    </div>
+
+                                    <button
+                                        className="todolist-item-menu-btn"
+                                        onClick={() => this.updateTodoListEditMenuState(item)}
+                                    >
+                                        <i className="todolist-item-menu-icon material-icons">more_vert</i>
+                                    </button>
                                 </div>
 
-                                <button className="todolist-item-menu-btn">
-                                    <i className="todolist-item-menu-icon material-icons">more_vert</i>
-                                </button>
+                                {item.edit ?
+                                    <div className="todolist-item-edit-box">
+                                        <div className="todolist-item-edit-input-box">
+                                            <input
+                                                className="todolist-item-edit-input"
+                                                type="text"
+                                                defaultValue={item.CONTENT}
+                                            />
+
+                                            <button
+                                                className="todolist-item-edit-save-btn"
+                                            >
+                                                <i className="todolist-item-edit-save-icon material-icons">edit</i>
+                                            </button>
+                                        </div>
+
+                                        <button
+                                            className="todolist-item-edit-remove-btn"
+                                        >
+                                            <i className="todolist-item-edit-remove-icon material-icons">delete_forever</i>
+                                        </button>
+
+                                        <button
+                                            className="todolist-item-edit-close-btn"
+                                            onClick={() => this.updateTodoListEditMenuState(item)}
+                                        >
+                                            <i className="todolist-item-edit-close-icon material-icons">close</i>
+                                        </button>
+
+                                    </div>
+                                : '' }
+
                             </li>
                         )}
                     </ul>
