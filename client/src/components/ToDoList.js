@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as axiosService from '../services/axios/axios';
 import * as userInfoService from '../services/userInfo/userInfo';
-import { getListURL, addListURL, updateStateURL } from '../services/axios/axiosUrl';
+import { getListURL, addListURL, updateStateURL, updateListURL } from '../services/axios/axiosUrl';
 import { findIndex, each } from 'underscore';
 import '../assets/css/toDoList.css';
 
@@ -41,6 +41,7 @@ class ToDoList extends Component {
 
             each(todoList.data.data, (data) =>{
                 data['edit'] = false;
+                data['editContent'] = '';
             });
 
             this.setState({
@@ -58,6 +59,11 @@ class ToDoList extends Component {
     }
 
     addTodoList = async () => {
+
+        if(this.state.addTodoValue === ''){
+            alert('값을 입력해 주세요.');
+            return;
+        }
 
         try {
             // wait for promises
@@ -129,6 +135,37 @@ class ToDoList extends Component {
         }
     }
 
+    updateTodoList = async (item) => {
+
+        if(item.editContent === ''){
+            return;
+        }
+
+        try {
+            // wait for promises
+            let url = updateListURL;
+            let token = userInfoService.getLocalStorage('aslover-token');
+            let param = {
+                NO : item.NO,
+                CONTENT : item.editContent,
+                token : token
+            }
+
+            const updateTodoList = await axiosService.putData(url, param);
+
+            if(updateTodoList.data.result !== 1){
+                alert('error!');
+                return;
+            }
+
+            this.fetchTodoList();
+
+        } catch(e) {
+            // if err, stop at this point
+            console.log(e);
+        }
+    }
+
     updateTodoListEditMenuState(item) {
 
         let listTest = this.state.list;
@@ -153,9 +190,31 @@ class ToDoList extends Component {
         return;
     }
 
+    updateTodoInputKeyPress = (event, item) => {
+
+        if (event.keyCode === 13 || event.charCode === 13) {
+            this.updateTodoList(item);
+        }
+
+        return;
+    }
+
     updateInputValue(event) {
         this.setState({
             addTodoValue: event.target.value
+        });
+
+        return;
+    }
+
+    updateTodoItemInputValue(event, item) {
+
+        let newTodolist = this.state.list;
+        let index = findIndex(newTodolist, { NO : item.NO });
+        newTodolist[index].editContent = event.target.value;
+
+        this.setState({
+            list: newTodolist
         });
 
         return;
@@ -218,10 +277,13 @@ class ToDoList extends Component {
                                                 className="todolist-item-edit-input"
                                                 type="text"
                                                 defaultValue={item.CONTENT}
+                                                onKeyPress={event => this.updateTodoInputKeyPress(event, item)}
+                                                onChange={event => this.updateTodoItemInputValue(event, item)}
                                             />
 
                                             <button
                                                 className="todolist-item-edit-save-btn"
+                                                onClick={() => this.updateTodoList(item)}
                                             >
                                                 <i className="todolist-item-edit-save-icon material-icons">edit</i>
                                             </button>
