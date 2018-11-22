@@ -97,11 +97,23 @@ class ToDoList extends Component {
         }
     }
 
-    updateTodoListState = async (item) => {
+    updateTodoListState = async (item, type) => {
+        if(item === undefined){
+            return;
+        }
+
+        if(type !== 'edit' && type !== 'remove'){
+            return;
+        }
 
         let complete = 0;
-        if(item.IS_COMPLETE === 0){
+
+        if(type === 'edit' && item.IS_COMPLETE === 0){
             complete = 1;
+        }
+
+        if(type === 'remove'){
+            complete = 3;
         }
 
         try {
@@ -121,6 +133,11 @@ class ToDoList extends Component {
                 return;
             }
 
+            if(type === 'remove'){
+                this.fetchTodoList();
+                return;
+            }
+
             let newTodolist = this.state.list;
             let index = findIndex(newTodolist, { NO : item.NO });
             newTodolist[index].IS_COMPLETE = complete;
@@ -136,6 +153,10 @@ class ToDoList extends Component {
     }
 
     updateTodoList = async (item) => {
+
+        if(item === undefined){
+            return;
+        }
 
         if(item.editContent === ''){
             return;
@@ -168,6 +189,10 @@ class ToDoList extends Component {
 
     updateTodoListEditMenuState(item) {
 
+        if(item === undefined){
+            return;
+        }
+
         let listTest = this.state.list;
 
         let index = findIndex(listTest, { NO : item.NO });
@@ -192,6 +217,10 @@ class ToDoList extends Component {
 
     updateTodoInputKeyPress = (event, item) => {
 
+        if(item === undefined){
+            return;
+        }
+
         if (event.keyCode === 13 || event.charCode === 13) {
             this.updateTodoList(item);
         }
@@ -208,6 +237,10 @@ class ToDoList extends Component {
     }
 
     updateTodoItemInputValue(event, item) {
+
+        if(item === undefined){
+            return;
+        }
 
         let newTodolist = this.state.list;
         let index = findIndex(newTodolist, { NO : item.NO });
@@ -251,7 +284,7 @@ class ToDoList extends Component {
                                 <div className={!item.edit ? "todolist-item-outer" : "todolist-item-outer edit-mode"}>
                                     <button
                                         className="todolist-item-check-btn"
-                                        onClick={() => this.updateTodoListState(item)}
+                                        onClick={() => this.updateTodoListState(item, 'edit')}
                                     >
                                         {item.IS_COMPLETE > 0 ?
                                             <i className="todolist-item-check-icon material-icons">done</i> : ''
@@ -291,6 +324,7 @@ class ToDoList extends Component {
 
                                         <button
                                             className="todolist-item-edit-remove-btn"
+                                            onClick={() => this.updateTodoListState(item, 'remove')}
                                         >
                                             <i className="todolist-item-edit-remove-icon material-icons">delete_forever</i>
                                         </button>
